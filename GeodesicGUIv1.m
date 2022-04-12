@@ -187,6 +187,7 @@ function keypress(~,event)
         case 's'
             disp('botão apertado: s')     %save json arquive
             saveJSON(fullmesh, 'mesh.json');
+            saveOFF(fullmesh.base_mesh.coords, fullmesh.base_mesh.quads, fullmesh.base_mesh.triangles, 'mesh.off');
         case 'f' 
             
             disp('botão apertado: f')

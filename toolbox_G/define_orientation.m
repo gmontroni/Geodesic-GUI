@@ -12,7 +12,7 @@ for vertex = 1:fullmesh.number_of_vertices % poderia alterar para percorrer apen
     number_of_geodesics = size(geodesics_of_vertex,1);
     geodesics_oriented = zeros(number_of_geodesics,1);
     if number_of_geodesics > 0
-        gcells = zeros(number_of_geodesics,2);
+        gcells = zeros(number_of_geodesics,3);
         for geo = 1:number_of_geodesics            %percorre as geodesicas
             geodesic_id = geodesics_of_vertex(geo,3);
             if geodesics_of_vertex(geo,1)==vertex    %
@@ -35,12 +35,10 @@ for vertex = 1:fullmesh.number_of_vertices % poderia alterar para percorrer apen
                 assert(size(triangle,1)==1,'A geodesic in more than one triangle!');         %tem que ter apenas um triangulo
                 p1 = star(star(:,4)==triangle, 2);   %id dos vertices
                 p2 = star(star(:,4)==triangle, 3);
-                middle = [fullmesh.paths(geodesic_id).geodesic{second}.x; %coordenada onde a geodesica cruza a aresta
-                    fullmesh.paths(geodesic_id).geodesic{second}.y;
-                    fullmesh.paths(geodesic_id).geodesic{second}.z ];
-                triangle_order = norm(fullmesh.coords(p1) - fullmesh.coords(p2)) / norm(fullmesh.coords(p1) - middle);  %proporção
+                middle = [fullmesh.paths(geodesic_id).geodesic{second}.x fullmesh.paths(geodesic_id).geodesic{second}.y fullmesh.paths(geodesic_id).geodesic{second}.z ];%coordenada onde a geodesica cruza a aresta
+                triangle_order = norm(fullmesh.coords(p1,:) - middle) / norm(fullmesh.coords(p1,:) - fullmesh.coords(p2,:));  %proporção
             end
-            gcells(geo,:) = [ triangle geodesic_id ];
+            gcells(geo,:) = [ triangle geodesic_id triangle_order ];
         end
         
         number_of_triangles = size(star,1);
@@ -54,7 +52,12 @@ for vertex = 1:fullmesh.number_of_vertices % poderia alterar para percorrer apen
                 geodesics_oriented(geo) = geodesics(1,2);
                 geo = geo + 1;
             elseif size(geodesics,1) > 1   %mais de uma geodesica no triangulo
-                assert(false);
+                geodesics_sorted = sortrows(geodesics,3);
+                for i=1:size(geodesics,1)
+                    assert(geo <= number_of_geodesics, 'Is there more geodesics now?' );
+                    geodesics_oriented(geo) = geodesics_sorted(i,2);
+                    geo = geo + 1;
+                end                
             end
         end
     end
