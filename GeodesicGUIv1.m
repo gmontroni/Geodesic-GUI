@@ -55,14 +55,14 @@ fprintf('w: determine the base mesh. \n')
 fprintf('r: removes the last created geodesic path. \n')
 fprintf('s: save arquive json and off. \n')
 fprintf('f: hides the face. \n')
-fprintf('g: shows the face. \n')
+fprintf('F: shows the face. \n')
 fprintf('e: hides the edge. \n')
-fprintf('q: shows the edge. \n')
+fprintf('E: shows the edge. \n')
 fprintf('------------------------------------------- \n\n')
 
 
 function buttonDownCallback(hObj, event)
-    global algorithm vertices mesh distances pathg pathgeodesic npath mgeo 
+    global algorithm vertices mesh distances pathg pathgeodesic npath mgeo hp
 
     % the left mouse button marks the starting point
     % while the right mouse button marks the end point of the geodesic path
@@ -153,14 +153,14 @@ function buttonDownCallback(hObj, event)
         hold on
         plot3(destination.x, destination.y, destination.z, 'oy', 'MarkerSize',3);       % plot destination 
         [x,y,z] = extract_coordinates_from_path(pathg);                                 % prepare path data for plotting
-        plot3(x*1.001,y*1.001,z*1.001,'Color',[0.6350 0.0780 0.1840],'LineWidth',2);    % plot path
+        hp = plot3(x*1.001,y*1.001,z*1.001,'Color',[0.6350 0.0780 0.1840],'LineWidth',2);    % plot path
 
     end
 
 end
 
 function keypress(~,event)
-    global vertices faces pathgeodesic mgeo edge2vertex h npath pathg edge2face return_mgeo return_pathgeodesic fullmesh
+    global vertices faces pathgeodesic mgeo edge2vertex h npath edge2face return_mgeo return_pathgeodesic fullmesh hp
     %  BUTTOM KEY PRESS
         % Inputs:
         %  hObj (unused) the axes
@@ -168,14 +168,14 @@ function keypress(~,event)
         % OUTPUT
         %  buttons with actions
 
-    % MELHORAR A FUNÇÃO RETURN (ao invés de plotar outra cor por cima da geodésica,
-    % tentar remover o plote)
     % Colocar uma função que remova qualquer geodésica feita, não apenas a
     % última feita
 
     hold on
     axes = h.Parent;
-    switch event.Key
+    disp(event)
+    switch event.Character %event.Key does not recognize upper letters
+                           %use event.Character for this
         case 'w'        %determine the base mesh
             
             fullmesh = create_fullmesh(vertices, faces, pathgeodesic, mgeo, edge2vertex, edge2face );
@@ -184,9 +184,8 @@ function keypress(~,event)
 
         case 'r'        %removes the last created geodesic path
             
+            delete(hp)  %delete the last geodesic
             npath = npath - 1;
-            [x,y,z] = extract_coordinates_from_path(pathg);
-            plot3(x*1.001,y*1.001,z*1.001,'Color',[0.8588; 0.6118; 0.1451],'LineWidth',2); 
             if size(mgeo,1) == 1
                 return_mgeo =[];
                 return_pathgeodesic = [];
@@ -206,18 +205,14 @@ function keypress(~,event)
         case 'f'        %hides the face
 
             set(h,'FaceAlpha',0)
-        case 'g'        %shows the face
+        case 'F'        %shows the face
 
-            disp('botão apertado: g')
             set(h,'FaceAlpha',1)
         case 'e'        %hides the edge
 
-            disp('botão apertado: e')
             set(h,'EdgeAlpha',0)
-        case 'q'        %shows the edge
+        case 'E'        %shows the edge
 
-            disp('botão apertado: q')
-            set(h,'EdgeAlpha',1)
-           
+            set(h,'EdgeAlpha',1)         
     end
 end
