@@ -4,7 +4,7 @@
 %   
 
 global geodesic_library; 
-global faces vertices mesh distances npath pathgeodesic mgeo h edge2vertex edge2face
+global faces vertices mesh distances npath pathgeodesic mgeo h edge2vertex edge2face hp
 
 
 %% "release" is faster and "debug" does additional checks
@@ -14,8 +14,14 @@ geodesic_library = 'geodesic_debug';
 AddToolbox 
 
 %% Geodesic GUI
-npath = 0; pathgeodesic = []; mgeo = [];
-[filename, directory] = uigetfile({'*.obj'},'Pick a file');                       % open the file
+npath = 0; pathgeodesic = []; mgeo = []; hp = [];
+[filename, directory] = uigetfile({'*.obj'},'Pick a file');         %open the file
+
+if filename == 0 
+    fprintf('Could not identify the mesh. \n'); clear;
+    return
+end
+
 obj = readObj([directory, filename]); vertices = obj.v; faces = obj.f.v;          % organize vertices and faces
 
 [sing] = singularities([directory, filename]);         % identifies the singularities in keenan's output
@@ -153,7 +159,7 @@ function buttonDownCallback(hObj, event)
         hold on
         plot3(destination.x, destination.y, destination.z, 'oy', 'MarkerSize',3);       % plot destination 
         [x,y,z] = extract_coordinates_from_path(pathg);                                 % prepare path data for plotting
-        hp = plot3(x*1.001,y*1.001,z*1.001,'Color',[0.6350 0.0780 0.1840],'LineWidth',2);    % plot path
+        hp(npath) = plot3(x*1.001,y*1.001,z*1.001,'Color',[0.6350 0.0780 0.1840],'LineWidth',2);    % plot path
 
     end
 
@@ -168,12 +174,9 @@ function keypress(~,event)
         % OUTPUT
         %  buttons with actions
 
-    % Colocar uma função que remova qualquer geodésica feita, não apenas a
-    % última feita
-
     hold on
     axes = h.Parent;
-    disp(event)
+    %disp(event)
     switch event.Character %event.Key does not recognize upper letters
                            %use event.Character for this
         case 'w'        %determine the base mesh
@@ -184,17 +187,23 @@ function keypress(~,event)
 
         case 'r'        %removes the last created geodesic path
             
-            delete(hp)  %delete the last geodesic
             npath = npath - 1;
             if size(mgeo,1) == 1
+                geodesicdelet = hp(1,npath+1);
+                delete(geodesicdelet)  %delete the last geodesic
                 return_mgeo =[];
                 return_pathgeodesic = [];
-                disp('mgeo == 1')
+                hp = [];
+                
+            elseif size(hp,2) == 0
+                disp('all geodesics have been removed')
             else
+                geodesicdelet = hp(1,npath+1);
+                delete(geodesicdelet)  %delete the last geodesic
                 return_mgeo = mgeo(1:npath,:);
                 return_pathgeodesic = pathgeodesic(:,1:npath);
             end
-           
+            
             mgeo = return_mgeo;
             pathgeodesic = return_pathgeodesic;
 
