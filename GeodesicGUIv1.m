@@ -151,24 +151,23 @@ function keypress(~,event)
         %  hObj (unused) the axes
         %  event: Key Press
         % OUTPUT
-        %  
+        %  buttons with actions
      
     % COLOCAR UM PRINTF AQUI QUE EXPLICA CADA UM DOS COMANDOS DESSA FUNÇÃO
-    %só falta explicar o output e o resto aqui pra baixo
-    % comando return
+    % MELHORAR A FUNÇÃO RETURN (ao invés de plotar outra cor por cima da geodésica,
+    % tentar remover o plote)
 
     hold on
     axes = h.Parent;
     switch event.Key
-        case 'w'
-            disp('botão apertado: w')
-
+        case 'w'        %determine the base mesh
+            
             fullmesh = create_fullmesh(vertices, faces, pathgeodesic, mgeo, edge2vertex, edge2face );
             patch('Faces',fullmesh.base_mesh.quads,'Vertices',fullmesh.base_mesh.coords,'FaceColor','c');
             patch('Faces',fullmesh.base_mesh.triangles,'Vertices',fullmesh.base_mesh.coords,'FaceColor','c');
 
-        case 'r'
-            disp('botão apertado: r')
+        case 'r'        %removes the last created geodesic path
+            
             npath = npath - 1;
             [x,y,z] = extract_coordinates_from_path(pathg);
             plot3(x*1.001,y*1.001,z*1.001,'Color',[0.8588; 0.6118; 0.1451],'LineWidth',2); 
@@ -184,21 +183,23 @@ function keypress(~,event)
             mgeo = return_mgeo;
             pathgeodesic = return_pathgeodesic;
 
-        case 's'
-            disp('botão apertado: s')     %save json arquive
+        case 's'        %save arquive json and off
+
             saveJSON(fullmesh, 'mesh.json');
             saveOFF(fullmesh.base_mesh.coords, fullmesh.base_mesh.quads, fullmesh.base_mesh.triangles, 'mesh.off');
-        case 'f' 
-            
-            disp('botão apertado: f')
+        case 'f'        %hides the face
+
             set(h,'FaceAlpha',0)
-        case 'g'
+        case 'g'        %shows the face
+
             disp('botão apertado: g')
             set(h,'FaceAlpha',1)
-        case 'e'
+        case 'e'        %hides the edge
+
             disp('botão apertado: e')
             set(h,'EdgeAlpha',0)
-        case 'q'
+        case 'q'        %shows the edge
+
             disp('botão apertado: q')
             set(h,'EdgeAlpha',1)
            
