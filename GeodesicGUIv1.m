@@ -44,7 +44,22 @@ set(h_fig,'KeyPressFcn',@keypress);               % starts key press function
 
 h.ButtonDownFcn = @buttonDownCallback;            % starts geodesic function
 
-% COLOCAR O RESTO DO PLOT AQUI
+%-----------------------COMMANDS------------------------
+
+fprintf('------------------------------------------- \n')
+fprintf('COMMANDS GEODESIC GUI \n')
+fprintf('------------------------------------------- \n')
+fprintf('left-click: source point geodesic. \n')
+fprintf('right-click: destination point geodesic. \n')
+fprintf('w: determine the base mesh. \n')
+fprintf('r: removes the last created geodesic path. \n')
+fprintf('s: save arquive json and off. \n')
+fprintf('f: hides the face. \n')
+fprintf('g: shows the face. \n')
+fprintf('e: hides the edge. \n')
+fprintf('q: shows the edge. \n')
+fprintf('------------------------------------------- \n\n')
+
 
 function buttonDownCallback(hObj, event)
     global algorithm vertices mesh distances pathg pathgeodesic npath mgeo 
@@ -152,10 +167,21 @@ function keypress(~,event)
         %  event: Key Press
         % OUTPUT
         %  buttons with actions
-     
-    % COLOCAR UM PRINTF AQUI QUE EXPLICA CADA UM DOS COMANDOS DESSA FUNÇÃO
+    
+    fprintf('COMMANDS GEODESIC GUI \n')
+    fprintf('--------------------------------------------- \n')
+    fprintf('w: determine the base mesh \n')
+    fprintf('r: removes the last created geodesic path \n')
+    fprintf('s: save arquive json and off \n')
+    fprintf('f: hides the face \n')
+    fprintf('g: shows the face \n')
+    fprintf('e: hides the edge \n')
+    fprintf('q: shows the edge \n')
+
     % MELHORAR A FUNÇÃO RETURN (ao invés de plotar outra cor por cima da geodésica,
     % tentar remover o plote)
+    % Colocar uma função que remova qualquer geodésica feita, não apenas a
+    % última feita
 
     hold on
     axes = h.Parent;
