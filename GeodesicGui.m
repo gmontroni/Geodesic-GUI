@@ -4,7 +4,7 @@
 %   
 
 global geodesic_library; 
-global faces vertices mesh distances npath pathgeodesic mgeo h edge2vertex edge2face
+global faces vertices mesh distances npath pathgeodesic mgeo h edge2vertex edge2face hp
 
 
 %% "release" is faster and "debug" does additional checks
@@ -14,8 +14,14 @@ geodesic_library = 'geodesic_debug';
 AddToolbox 
 
 %% Geodesic GUI
-npath = 0; pathgeodesic = []; mgeo = [];
-[filename, directory] = uigetfile({'*.obj'},'Pick a file');                       % open the file
+npath = 0; pathgeodesic = []; mgeo = []; hp = [];
+[filename, directory] = uigetfile({'*.obj'},'Pick a file');         %open the file
+
+if filename == 0 
+    fprintf('Could not identify the mesh. \n'); clear;
+    return
+end
+
 obj = readObj([directory, filename]); vertices = obj.v; faces = obj.f.v;          % organize vertices and faces
 
 [sing] = singularities([directory, filename]);         % identifies the singularities in keenan's output
@@ -44,10 +50,25 @@ set(h_fig,'KeyPressFcn',@keypress);               % starts key press function
 
 h.ButtonDownFcn = @buttonDownCallback;            % starts geodesic function
 
-% COLOCAR O RESTO DO PLOT AQUI
+%-----------------------COMMANDS------------------------
+
+fprintf('------------------------------------------- \n')
+fprintf('COMMANDS GEODESIC GUI \n')
+fprintf('------------------------------------------- \n')
+fprintf('left-click: source point geodesic. \n')
+fprintf('right-click: destination point geodesic. \n')
+fprintf('w: determine the base mesh. \n')
+fprintf('r: removes the last created geodesic path. \n')
+fprintf('s: save arquive json and off. \n')
+fprintf('f: hides the face. \n')
+fprintf('F: shows the face. \n')
+fprintf('e: hides the edge. \n')
+fprintf('E: shows the edge. \n')
+fprintf('------------------------------------------- \n\n')
+
 
 function buttonDownCallback(hObj, event)
-    global algorithm vertices mesh distances pathg pathgeodesic npath mgeo 
+    global algorithm vertices mesh distances pathg pathgeodesic npath mgeo hp
 
     % the left mouse button marks the starting point
     % while the right mouse button marks the end point of the geodesic path
@@ -138,68 +159,69 @@ function buttonDownCallback(hObj, event)
         hold on
         plot3(destination.x, destination.y, destination.z, 'oy', 'MarkerSize',3);       % plot destination 
         [x,y,z] = extract_coordinates_from_path(pathg);                                 % prepare path data for plotting
-        plot3(x*1.001,y*1.001,z*1.001,'Color',[0.6350 0.0780 0.1840],'LineWidth',2);    % plot path
+        hp(npath) = plot3(x*1.001,y*1.001,z*1.001,'Color',[0.6350 0.0780 0.1840],'LineWidth',2);    % plot path
 
     end
 
 end
 
 function keypress(~,event)
-    global vertices faces pathgeodesic mgeo edge2vertex h npath pathg edge2face return_mgeo return_pathgeodesic
+    global vertices faces pathgeodesic mgeo edge2vertex h npath edge2face return_mgeo return_pathgeodesic fullmesh hp
     %  BUTTOM KEY PRESS
         % Inputs:
         %  hObj (unused) the axes
         %  event: Key Press
         % OUTPUT
-        %  
-     
-    % COLOCAR UM PRINTF AQUI QUE EXPLICA CADA UM DOS COMANDOS DESSA FUNÇÃO
-    %só falta explicar o output e o resto aqui pra baixo
-    % comando return
+        %  buttons with actions
 
     hold on
     axes = h.Parent;
-    switch event.Key
-        case 'w'
-            disp('botão apertado: w')
-
+    %disp(event)
+    switch event.Character %event.Key does not recognize upper letters
+                           %use event.Character for this
+        case 'w'        %determine the base mesh
+            
             fullmesh = create_fullmesh(vertices, faces, pathgeodesic, mgeo, edge2vertex, edge2face );
             patch('Faces',fullmesh.base_mesh.quads,'Vertices',fullmesh.base_mesh.coords,'FaceColor','c');
             patch('Faces',fullmesh.base_mesh.triangles,'Vertices',fullmesh.base_mesh.coords,'FaceColor','c');
 
-        case 'r'
-            disp('botão apertado: r')
+        case 'r'        %removes the last created geodesic path
+            
             npath = npath - 1;
-            [x,y,z] = extract_coordinates_from_path(pathg);
-            plot3(x*1.001,y*1.001,z*1.001,'Color',[0.8588; 0.6118; 0.1451],'LineWidth',2); 
             if size(mgeo,1) == 1
+                geodesicdelet = hp(1,npath+1);
+                delete(geodesicdelet)  %delete the last geodesic
                 return_mgeo =[];
                 return_pathgeodesic = [];
-                disp('mgeo == 1')
+                hp = [];
+                
+            elseif size(hp,2) == 0
+                disp('all geodesics have been removed')
             else
+                geodesicdelet = hp(1,npath+1);
+                delete(geodesicdelet)  %delete the last geodesic
                 return_mgeo = mgeo(1:npath,:);
                 return_pathgeodesic = pathgeodesic(:,1:npath);
             end
-           
+            
             mgeo = return_mgeo;
             pathgeodesic = return_pathgeodesic;
 
-        case 's'
-            disp('botão apertado: s')     %save json arquive
+        case 's'        %save arquive json and off
+
             saveJSON(fullmesh, 'mesh.json');
-        case 'f' 
-            
-            disp('botão apertado: f')
+            saveOFF(fullmesh.base_mesh.coords, fullmesh.base_mesh.quads, fullmesh.base_mesh.triangles, 'mesh.off');
+        case 'f'        %hides the face
+
             set(h,'FaceAlpha',0)
-        case 'g'
-            disp('botão apertado: g')
+        case 'F'        %shows the face
+
             set(h,'FaceAlpha',1)
-        case 'e'
-            disp('botão apertado: e')
+        case 'e'        %hides the edge
+
             set(h,'EdgeAlpha',0)
-        case 'q'
-            disp('botão apertado: q')
-            set(h,'EdgeAlpha',1)
-           
+        case 'E'        %shows the edge
+
+            set(h,'EdgeAlpha',1)         
     end
 end
