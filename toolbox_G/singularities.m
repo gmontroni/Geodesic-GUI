@@ -8,7 +8,7 @@ function [sing] = singularities(filename)
 %   sing: kx2 singularity matrix, where k is the number of singularities
 
 %Guilherme V. Montroni
-
+sing =[];
 file = fopen(filename,'r');      % open the file
 
 % skip the first 34 lines (Keenan's introduction)

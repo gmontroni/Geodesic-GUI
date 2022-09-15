@@ -19,11 +19,13 @@ RedColor = [1,0,0]; BlueColor = [0,0,1];   % singularities collors
 % the second column defines whether the singularity is positive or negative
 [k,~] = size(sing);
 
-for i=1:k
-    if sing(i,2) >= 0      % positive case, sing red
-        ColorMap(sing(i,1),:) = RedColor;
-    else                   % negative case, sing blue 
-        ColorMap(sing(i,1),:) = BlueColor;
+if k ~= 0
+    for i=1:k
+        if sing(i,2) >= 0      % positive case, sing red
+            ColorMap(sing(i,1),:) = RedColor;
+        else                   % negative case, sing blue 
+            ColorMap(sing(i,1),:) = BlueColor;
+        end
     end
 end
 end

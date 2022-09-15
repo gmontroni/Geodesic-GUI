@@ -22,7 +22,7 @@ if size(fullmesh.base_mesh.dense_vertices_to_base_vertices,1) < fullmesh.number_
 end
 
 q = 1;
-while q < size(quads,1)   %retira os qudriláteros repetidos
+while q < size(quads,1)   %retira os quadriláteros repetidos
     repetidos = all(  quads == [quads(q,2) quads(q,3) quads(q,4) quads(q,1)] | ...
         quads == [quads(q,3) quads(q,4) quads(q,1) quads(q,2)] | ...
         quads == [quads(q,4) quads(q,1) quads(q,2) quads(q,3)],2);
