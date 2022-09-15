@@ -1,8 +1,9 @@
 % INPUT:
-%   filename: obj arquive from keenan's output
+%   filename: OBJ arquive from keenan's output
 % OUTPUT:
-%   
-
+%   mesh.json with all calculated information (dense mesh, base mesh, paths geodesic ...)
+%   Off arquive
+clc;clear;
 global geodesic_library; 
 global faces vertices mesh distances npath pathgeodesic mgeo h edge2vertex edge2face hp
 
@@ -52,19 +53,19 @@ h.ButtonDownFcn = @buttonDownCallback;            % starts geodesic function
 
 %-----------------------COMMANDS------------------------
 
-fprintf('------------------------------------------- \n')
-fprintf('COMMANDS GEODESIC GUI \n')
-fprintf('------------------------------------------- \n')
-fprintf('left-click: source point geodesic. \n')
-fprintf('right-click: destination point geodesic. \n')
-fprintf('w: determine the base mesh. \n')
-fprintf('r: removes the last created geodesic path. \n')
-fprintf('s: save arquive json and off. \n')
-fprintf('f: hides the face. \n')
-fprintf('F: shows the face. \n')
-fprintf('e: hides the edge. \n')
-fprintf('E: shows the edge. \n')
-fprintf('------------------------------------------- \n\n')
+fprintf('|-------------------------------------------|\n')
+fprintf('|COMMANDS GEODESIC GUI                      |\n')
+fprintf('|-------------------------------------------|\n')
+fprintf('|left-click: source point geodesic.         |\n')
+fprintf('|right-click: destination point geodesic.   |\n')
+fprintf('|w: determine the base mesh.                |\n')
+fprintf('|r: removes the last created geodesic path. |\n')
+fprintf('|s: save arquive json and off.              |\n')
+fprintf('|f: hides the face.                         |\n')
+fprintf('|F: shows the face.                         |\n')
+fprintf('|e: hides the edge.                         |\n')
+fprintf('|E: shows the edge.                         |\n')
+fprintf('|-------------------------------------------|\n\n')
 
 
 function buttonDownCallback(hObj, event)
@@ -179,7 +180,7 @@ function keypress(~,event)
     %disp(event)
     switch event.Character %event.Key does not recognize upper letters
                            %use event.Character for this
-        case 'w'        %determine the base mesh
+        case 'w'           %determine the base mesh
             
             fullmesh = create_fullmesh(vertices, faces, pathgeodesic, mgeo, edge2vertex, edge2face );
             patch('Faces',fullmesh.base_mesh.quads,'Vertices',fullmesh.base_mesh.coords,'FaceColor','c');
