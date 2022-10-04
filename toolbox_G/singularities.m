@@ -16,7 +16,7 @@ for i = 1:33
     line = regexp(fgetl(file), '\s', 'split');  % each word of the text line is a column of the matrix
 end                                             
                                                 
-i = 1; j = 1; cond = true;    
+i = 1; cond = true;    
 
 while cond
 L = fgetl(file);                         % read the line
@@ -31,6 +31,7 @@ line = regexp(L, '\s', 'split');         % row elements divided into words (colu
         sing(i,1) = str2double(line{3});   % of the face and the value.
         sing(i,2) = str2double(line{4});   
         i = i+1;
+        
     end
 end
 
