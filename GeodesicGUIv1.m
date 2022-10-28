@@ -25,7 +25,8 @@ end
 
 obj = readObj([directory, filename]); vertices = obj.v; faces = obj.f.v;          % organize vertices and faces
 
-[sing] = singularities([directory, filename]);      % identifies the singularities in keenan's output
+% [sing] = singularities([directory, filename]);      % identifies the singularities in keenan's output
+sing = [];
 [ColorMap] = ColorMaps(faces,sing);                 % color map to sings and surface
 
 
